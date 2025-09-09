@@ -12,6 +12,12 @@ interface Post {
   body: any[]
   excerpt?: string
   slug: { current: string }
+  categories?: {
+    _id: string
+    title: string
+    slug: { current: string }
+    color?: string
+  }[]
   mainImage?: {
     asset: any
     alt?: string
@@ -26,6 +32,12 @@ async function getPost(slug: string): Promise<Post | null> {
       body,
       excerpt,
       slug,
+      categories[]->{
+        _id,
+        title,
+        slug,
+        color
+      },
       mainImage {
         asset,
         alt
@@ -132,6 +144,21 @@ export default async function PostPage({
           )}
           
           <h1 className="text-3xl font-bold mb-4">{post.title}</h1>
+          
+          {/* カテゴリ表示 */}
+          {post.categories && post.categories.length > 0 && (
+            <div className="flex flex-wrap gap-2 mb-4">
+              {post.categories.map((category) => (
+                <span
+                  key={category._id}
+                  className={`px-3 py-1 text-sm rounded-full text-white bg-${category.color || 'blue'}-500`}
+                >
+                  {category.title}
+                </span>
+              ))}
+            </div>
+          )}
+          
           <div className="flex items-center text-gray-600 text-sm">
             <time dateTime={post._createdAt}>
               {new Date(post._createdAt).toLocaleDateString('ja-JP', {
