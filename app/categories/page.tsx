@@ -1,0 +1,91 @@
+import Link from 'next/link'
+import { Metadata } from 'next'
+import { client } from '../../lib/sanity-client'
+
+export const metadata: Metadata = {
+  title: 'カテゴリ一覧',
+  description: '記事をカテゴリ別に閲覧できます。',
+  openGraph: {
+    title: 'My Blog - カテゴリ一覧',
+    description: '記事をカテゴリ別に閲覧できます。',
+    type: 'website',
+  },
+}
+
+interface Category {
+  _id: string
+  title: string
+  slug: { current: string }
+  description?: string
+  color?: string
+  postCount: number
+}
+
+async function getCategories(): Promise<Category[]> {
+  const query = `
+    *[_type == "category"] | order(title asc) {
+      _id,
+      title,
+      slug,
+      description,
+      color,
+      "postCount": count(*[_type == "post" && references(^._id)])
+    }
+  `
+  return await client.fetch(query)
+}
+
+export default async function CategoriesPage() {
+  const categories = await getCategories()
+
+  return (
+    <main className="max-w-4xl mx-auto px-4 py-8">
+      <header className="mb-12">
+        <Link href="/" className="text-blue-600 hover:underline mb-4 inline-block">
+          ← Back to Blog
+        </Link>
+        <h1 className="text-3xl font-bold text-gray-900 mb-4">カテゴリ一覧</h1>
+        <p className="text-lg text-gray-600">記事をカテゴリ別に閲覧できます</p>
+      </header>
+
+      <section>
+        {categories.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-gray-500 mb-4">カテゴリが設定されていません。</p>
+            <p className="text-sm text-gray-400">
+              Sanity Studio でカテゴリを作成してください。
+            </p>
+          </div>
+        ) : (
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {categories.map((category) => (
+              <Link
+                key={category._id}
+                href={`/categories/${category.slug.current}`}
+                className="block"
+              >
+                <div className="border rounded-lg p-6 hover:shadow-lg transition-shadow bg-white">
+                  <div className="flex items-center justify-between mb-4">
+                    <span
+                      className={`px-3 py-1 text-sm rounded-full text-white bg-${category.color || 'blue'}-500`}
+                    >
+                      {category.title}
+                    </span>
+                    <span className="text-sm text-gray-500">
+                      {category.postCount}記事
+                    </span>
+                  </div>
+                  {category.description && (
+                    <p className="text-gray-700 text-sm leading-relaxed">
+                      {category.description}
+                    </p>
+                  )}
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
+      </section>
+    </main>
+  )
+}

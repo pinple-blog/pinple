@@ -62,7 +62,17 @@ export default async function Home() {
     <main className="max-w-4xl mx-auto px-4 py-8">
       <header className="mb-12 text-center">
         <h1 className="text-4xl font-bold text-gray-900 mb-4">My Blog</h1>
-        <p className="text-lg text-gray-600">Next.jsとSanityで作られたモダンなブログ</p>
+        <p className="text-lg text-gray-600 mb-6">Next.jsとSanityで作られたモダンなブログ</p>
+        
+        {/* ナビゲーションメニュー */}
+        <nav className="flex justify-center gap-6 text-sm">
+          <Link href="/" className="text-blue-600 hover:underline font-medium">
+            ホーム
+          </Link>
+          <Link href="/categories" className="text-blue-600 hover:underline font-medium">
+            カテゴリ
+          </Link>
+        </nav>
       </header>
 
       <section>
