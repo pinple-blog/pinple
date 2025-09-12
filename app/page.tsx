@@ -20,6 +20,12 @@ interface Post {
   slug: { current: string }
   _createdAt: string
   excerpt?: string
+  categories?: {
+    _id: string
+    title: string
+    slug: { current: string }
+    color?: string
+  }[]
   mainImage?: {
     asset: any
     alt?: string
@@ -34,6 +40,12 @@ async function getPosts(): Promise<Post[]> {
       slug,
       _createdAt,
       excerpt,
+      categories[]->{
+        _id,
+        title,
+        slug,
+        color
+      },
       mainImage {
         asset,
         alt
@@ -60,8 +72,9 @@ export default async function Home() {
           <Link href="/categories" className="text-blue-600 hover:underline font-medium">
             カテゴリ
           </Link>
+          <span className="text-gray-300">|</span>
           <Link href="/search" className="text-blue-600 hover:underline font-medium">
-            検索
+          検索
           </Link>
         </nav>
       </header>
