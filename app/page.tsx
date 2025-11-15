@@ -59,6 +59,8 @@ async function getPosts(): Promise<Post[]> {
 
 export default async function Home() {
   const posts = await getPosts()
+  const POSTS_PER_PAGE = 10 // 1ページあたりの表示件数
+  const totalPages = Math.ceil(posts.length / POSTS_PER_PAGE) // 総ページ数
 
   return (
     <BlogLayout sidebar={<Sidebar />}>
@@ -163,26 +165,31 @@ export default async function Home() {
         )}
       </section>
 
-      {/* ページネーション（将来的に実装） */}
-      <div className="mt-12 flex justify-center">
-        <nav className="flex items-center gap-2">
-          <button className="px-4 py-2 text-sm font-light text-gray-400 bg-white rounded-lg border border-gray-200 cursor-not-allowed" disabled>
-            前へ
-          </button>
-          <span className="px-4 py-2 text-sm font-normal text-gray-800 bg-white rounded-lg border border-gray-300">
-            1
-          </span>
-          <button className="px-4 py-2 text-sm font-light text-gray-600 bg-white rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors duration-200">
-            2
-          </button>
-          <button className="px-4 py-2 text-sm font-light text-gray-600 bg-white rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors duration-200">
-            3
-          </button>
-          <button className="px-4 py-2 text-sm font-light text-gray-600 bg-white rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors duration-200">
-            次へ
-          </button>
-        </nav>
-      </div>
+      {/* ページネーション（2ページ目以降が存在する時のみ表示） */}
+      {totalPages > 1 && (
+        <div className="mt-12 flex justify-center">
+          <nav className="flex items-center gap-2">
+            <button className="px-4 py-2 text-sm font-light text-gray-400 bg-white rounded-lg border border-gray-200 cursor-not-allowed" disabled>
+              前へ
+            </button>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
+              <button
+                key={pageNum}
+                className={
+                  pageNum === 1
+                    ? "px-4 py-2 text-sm font-normal text-gray-800 bg-white rounded-lg border border-gray-300"
+                    : "px-4 py-2 text-sm font-light text-gray-600 bg-white rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors duration-200"
+                }
+              >
+                {pageNum}
+              </button>
+            ))}
+            <button className="px-4 py-2 text-sm font-light text-gray-600 bg-white rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors duration-200">
+              次へ
+            </button>
+          </nav>
+        </div>
+      )}
     </BlogLayout>
   )
 }
