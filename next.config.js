@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
+    domains: ['cdn.sanity.io'],
     remotePatterns: [
       {
         protocol: 'https',
@@ -36,6 +37,11 @@ const nextConfig = {
     'framer-motion': {
       transform: 'framer-motion/dist/es/{{member}}',
     },
+  },
+  i18n: {
+    locales: ['ja', 'en'],
+    defaultLocale: 'ja',
+    localeDetection: false, // 自動検出を無効化して、ユーザーが明示的に選択
   },
 }
 

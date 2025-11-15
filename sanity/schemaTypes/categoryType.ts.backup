@@ -7,15 +7,9 @@ export default defineType({
   fields: [
     defineField({
       name: 'title',
-      title: 'Title (日本語)',
+      title: 'Title',
       type: 'string',
-      validation: Rule => Rule.required(),
-    }),
-    defineField({
-      name: 'title_en',
-      title: 'Title (English)',
-      type: 'string',
-      description: '英語版のカテゴリ名（オプション）',
+      validation: (rule) => rule.required(),
     }),
     defineField({
       name: 'slug',
@@ -25,24 +19,18 @@ export default defineType({
         source: 'title',
         maxLength: 96,
       },
-      validation: Rule => Rule.required(),
+      validation: (rule) => rule.required(),
     }),
     defineField({
       name: 'description',
-      title: 'Description (日本語)',
+      title: 'Description',
       type: 'text',
-    }),
-    defineField({
-      name: 'description_en',
-      title: 'Description (English)',
-      type: 'text',
-      description: '英語版の説明（オプション）',
+      rows: 3,
     }),
     defineField({
       name: 'color',
       title: 'Color',
       type: 'string',
-      description: 'カテゴリの表示色',
       options: {
         list: [
           {title: 'Blue', value: 'blue'},
@@ -53,21 +41,13 @@ export default defineType({
           {title: 'Gray', value: 'gray'},
         ],
       },
+      initialValue: 'blue',
     }),
   ],
-
   preview: {
     select: {
       title: 'title',
-      title_en: 'title_en',
-    },
-    prepare(selection) {
-      const {title, title_en} = selection
-      const subtitle = title_en ? `EN: ${title_en}` : 'No English translation'
-      return {
-        title,
-        subtitle
-      }
+      subtitle: 'description',
     },
   },
 })

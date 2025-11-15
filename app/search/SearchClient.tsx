@@ -6,6 +6,8 @@ import Image from 'next/image'
 import { useSearchParams } from 'next/navigation'
 import { client } from '../../sanity/lib/client'
 import { getImageUrl } from '../../lib/sanity-image'
+import BlogLayout from '../../components/BlogLayout'
+import Sidebar from '../../components/Sidebar'
 
 interface SearchResult {
   _id: string
@@ -16,6 +18,7 @@ interface SearchResult {
   categories?: {
     _id: string
     title: string
+    slug: { current: string }
     color?: string
   }[]
   mainImage?: {
@@ -57,6 +60,7 @@ export default function SearchClient() {
           categories[]->{
             _id,
             title,
+            slug,
             color
           },
           mainImage {
@@ -97,100 +101,136 @@ export default function SearchClient() {
   }, [query])
 
   return (
-    <main className="max-w-4xl mx-auto px-4 py-8">
-      <header className="mb-8">
-        <Link href="/" className="text-blue-600 hover:underline mb-4 inline-block">
-          ← Back to Blog
-        </Link>
-        <h1 className="text-3xl font-bold text-gray-900 mb-6">記事検索</h1>
+    <BlogLayout sidebar={<Sidebar />}>
+      {/* 検索ヘッダー */}
+      <section className="text-center mb-12 bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+        <h2 className="text-3xl font-light text-gray-800 mb-4 tracking-wide">
+          記事検索
+        </h2>
+        <p className="text-gray-500 font-light mb-8">
+          記事のタイトルや内容で検索できます
+        </p>
+        <div className="w-20 h-0.5 bg-gray-300 mx-auto mb-8"></div>
         
         {/* 検索フォーム */}
-        <form onSubmit={handleSearch} className="mb-8">
-          <div className="flex gap-2">
+        <form onSubmit={handleSearch} className="max-w-2xl mx-auto">
+          <div className="bg-gray-50 rounded-full shadow-sm border border-gray-100 p-2 flex items-center">
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="記事のタイトルや内容で検索..."
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="キーワードを入力..."
+              className="flex-1 px-6 py-3 font-light text-gray-700 focus:outline-none bg-transparent"
             />
             <button
               type="submit"
               disabled={loading}
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-gray-800 text-white px-6 py-3 rounded-full hover:bg-gray-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
             >
-              {loading ? '検索中...' : '検索'}
+              {loading ? (
+                <span className="text-sm">検索中...</span>
+              ) : (
+                <>
+                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                  <span className="text-sm">検索</span>
+                </>
+              )}
             </button>
           </div>
         </form>
-      </header>
+      </section>
 
       {/* 検索結果 */}
       <section>
         {loading && (
-          <div className="text-center py-8">
-            <p className="text-gray-600">検索中...</p>
+          <div className="text-center py-12">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+              <div className="w-12 h-12 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin mx-auto mb-4"></div>
+              <p className="text-gray-500 font-light">検索中...</p>
+            </div>
           </div>
         )}
 
         {!loading && hasSearched && (
-          <div className="mb-4">
-            <p className="text-gray-600">
-              "{searchQuery}" の検索結果: {results.length}件
+          <div className="mb-8 text-center">
+            <p className="text-gray-600 font-light">
+              「<span className="font-normal text-gray-800">{searchQuery}</span>」の検索結果: 
+              <span className="font-normal text-gray-800 ml-2">{results.length}件</span>
             </p>
           </div>
         )}
 
         {!loading && hasSearched && results.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-gray-500 mb-4">検索結果が見つかりませんでした。</p>
-            <p className="text-sm text-gray-400">
-              別のキーワードで検索してみてください。
-            </p>
+          <div className="text-center py-20">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-12">
+              <div className="w-16 h-16 bg-gray-100 rounded-full mx-auto mb-6 flex items-center justify-center">
+                <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
+              <p className="text-gray-500 mb-4 font-light">検索結果が見つかりませんでした</p>
+              <p className="text-sm text-gray-400">
+                別のキーワードで検索してみてください
+              </p>
+            </div>
           </div>
         )}
 
         {!loading && !hasSearched && !query && (
-          <div className="text-center py-12">
-            <p className="text-gray-500 mb-4">記事を検索してみましょう。</p>
-            <p className="text-sm text-gray-400">
-              タイトルや内容のキーワードで検索できます。
-            </p>
+          <div className="text-center py-20">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-12">
+              <div className="w-16 h-16 bg-gray-100 rounded-full mx-auto mb-6 flex items-center justify-center">
+                <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
+              <p className="text-gray-500 mb-4 font-light">記事を検索してみましょう</p>
+              <p className="text-sm text-gray-400">
+                タイトルや内容のキーワードで検索できます
+              </p>
+            </div>
           </div>
         )}
 
         {!loading && results.length > 0 && (
           <div className="space-y-8">
             {results.map((post) => (
-              <article key={post._id} className="border-b pb-8">
+              <article 
+                key={post._id} 
+                className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-all duration-300 group"
+              >
                 <Link href={`/posts/${post.slug.current}`}>
-                  <div className="flex gap-6 hover:bg-gray-50 p-4 rounded-lg transition-colors">
-                    {/* サムネイル画像 */}
-                    {post.mainImage && (
-                      <div className="flex-shrink-0">
+                  <div className="flex flex-col sm:flex-row">
+                    {/* 画像エリア */}
+                    <div className="sm:w-1/3 aspect-[16/9] sm:aspect-[4/3] bg-gray-50 overflow-hidden">
+                      {post.mainImage ? (
                         <Image
-                          src={getImageUrl(post.mainImage, 200, 150) || ''}
+                          src={getImageUrl(post.mainImage, 300, 225) || ''}
                           alt={post.mainImage.alt || post.title}
-                          width={200}
-                          height={150}
-                          className="rounded-lg object-cover"
+                          width={300}
+                          height={225}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                         />
-                      </div>
-                    )}
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <svg className="w-12 h-12 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                          </svg>
+                        </div>
+                      )}
+                    </div>
                     
-                    {/* 記事情報 */}
-                    <div className="flex-1">
-                      <h3 className="text-xl font-semibold hover:text-blue-600 mb-2">
-                        {post.title}
-                      </h3>
-                      
-                      {/* カテゴリ表示 */}
+                    {/* コンテンツエリア */}
+                    <div className="flex-1 p-6">
+                      {/* カテゴリバッジ */}
                       {post.categories && post.categories.length > 0 && (
-                        <div className="flex flex-wrap gap-2 mb-2">
-                          {post.categories.map((category) => (
+                        <div className="flex flex-wrap gap-2 mb-3">
+                          {post.categories.slice(0, 2).map((category) => (
                             <span
                               key={category._id}
-                              className={`px-2 py-1 text-xs rounded-full text-white bg-${category.color || 'blue'}-500`}
+                              className="px-3 py-1 text-xs font-light bg-gray-100 text-gray-600 rounded-full"
                             >
                               {category.title}
                             </span>
@@ -198,7 +238,11 @@ export default function SearchClient() {
                         </div>
                       )}
                       
-                      <p className="text-gray-600 text-sm mb-3">
+                      <h3 className="text-lg font-light text-gray-800 mb-3 leading-relaxed group-hover:text-gray-600 transition-colors duration-200">
+                        {post.title}
+                      </h3>
+                      
+                      <p className="text-xs text-gray-400 mb-3 tracking-wide">
                         {new Date(post._createdAt).toLocaleDateString('ja-JP', {
                           year: 'numeric',
                           month: 'long',
@@ -207,8 +251,17 @@ export default function SearchClient() {
                       </p>
                       
                       {post.excerpt && (
-                        <p className="text-gray-700 line-clamp-3">{post.excerpt}</p>
+                        <p className="text-sm text-gray-600 leading-relaxed font-light line-clamp-2">
+                          {post.excerpt}
+                        </p>
                       )}
+                      
+                      <div className="mt-4 inline-flex items-center text-sm text-gray-500 group-hover:text-gray-700 transition-colors duration-200">
+                        <span className="font-light">続きを読む</span>
+                        <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </div>
                     </div>
                   </div>
                 </Link>
@@ -217,6 +270,6 @@ export default function SearchClient() {
           </div>
         )}
       </section>
-    </main>
+    </BlogLayout>
   )
 }
