@@ -65,6 +65,9 @@ export async function generateMetadata({
 
   const description = post.excerpt || `${post.title}についての記事です。`
 
+  // 画像URLを安全に取得
+  const imageUrl = post.mainImage?.asset ? getImageUrl(post.mainImage, 1200, 630) : null
+
   return {
     title: post.title,
     description,
@@ -74,13 +77,13 @@ export async function generateMetadata({
       type: 'article',
       publishedTime: post._createdAt,
       authors: ['Your Name'],
-      images: post.mainImage ? [getImageUrl(post.mainImage, 1200, 630) || ''] : [],
+      images: imageUrl ? [imageUrl] : [],
     },
     twitter: {
       card: 'summary_large_image',
       title: post.title,
       description,
-      images: post.mainImage ? [getImageUrl(post.mainImage, 1200, 630) || ''] : [],
+      images: imageUrl ? [imageUrl] : [],
     },
   }
 }
@@ -100,7 +103,7 @@ export default async function PostPage({
     <BlogLayout sidebar={<Sidebar />}>
       <article className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         {/* メイン画像 */}
-        {post.mainImage && (
+        {post.mainImage?.asset && (
           <div className="aspect-[21/9] bg-gray-50">
             <Image
               src={getImageUrl(post.mainImage, 800, 343) || ''}
