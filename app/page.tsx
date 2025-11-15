@@ -97,7 +97,7 @@ export default async function Home() {
                   <div className="flex flex-col sm:flex-row">
                     {/* 画像エリア */}
                     <div className="sm:w-1/3 aspect-[16/9] sm:aspect-[4/3] bg-gray-50 overflow-hidden">
-                      {post.mainImage ? (
+                      {post.mainImage?.asset ? (
                         <Image
                           src={getImageUrl(post.mainImage, 400, 300) || ''}
                           alt={post.mainImage.alt || post.title}
