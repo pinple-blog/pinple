@@ -17,7 +17,7 @@ export const blockContentType = defineType({
   name: 'blockContent',
   type: 'array',
   of: [
-    defineArrayMember({
+    {
       type: 'block',
       // Styles let you define what blocks can be marked up as. The default
       // set corresponds with HTML tags, but you can set any title or value
@@ -56,7 +56,7 @@ export const blockContentType = defineType({
           },
         ],
       },
-    }),
+    } as any,
     // You can add additional types here. Note that you can't use
     // primitive types such as 'string' and 'number' in the same array
     // as a block type.
