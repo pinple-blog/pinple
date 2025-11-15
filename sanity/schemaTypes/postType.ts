@@ -78,7 +78,7 @@ export default defineType({
       rows: 4,
       description: '記事の要約（英語）',
     }),
-    defineField({
+    {
       name: 'body',
       title: 'Body (日本語)',
       type: 'array',
@@ -128,8 +128,8 @@ export default defineType({
           ]
         },
       ],
-    }),
-    defineField({
+    } as any,
+    {
       name: 'body_en',
       title: 'Body (English)',
       type: 'array',
@@ -180,7 +180,7 @@ export default defineType({
           ]
         },
       ],
-    }),
+    } as any,
   ],
 
   preview: {

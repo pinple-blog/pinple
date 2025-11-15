@@ -25,7 +25,7 @@ const authorType = defineType({
         hotspot: true,
       },
     }),
-    defineField({
+    {
       name: 'bio',
       type: 'array',
       of: [
@@ -35,7 +35,7 @@ const authorType = defineType({
           lists: [],
         }),
       ],
-    }),
+    } as any,
   ],
   preview: {
     select: {
