@@ -27,13 +27,13 @@ export default defineType({
       },
       validation: Rule => Rule.required(),
     }),
-    defineField({
+    {
       name: 'author',
       title: 'Author',
       type: 'reference',
       to: {type: 'author'},
-    }),
-    defineField({
+    } as any,
+    {
       name: 'mainImage',
       title: 'Main image',
       type: 'image',
@@ -52,13 +52,13 @@ export default defineType({
           title: 'Alternative Text (English)',
         }
       ]
-    }),
-    defineField({
+    } as any,
+    {
       name: 'categories',
       title: 'Categories',
       type: 'array',
       of: [{type: 'reference', to: {type: 'category'}}],
-    }),
+    } as any,
     defineField({
       name: 'publishedAt',
       title: 'Published at',
