@@ -8,7 +8,8 @@ export function urlFor(source: any) {
 }
 
 export function getImageUrl(image: any, width?: number, height?: number) {
-  if (!image) return null
+  // imageまたはimage.assetがnullの場合はnullを返す
+  if (!image || !image.asset) return null
   
   let urlBuilder = urlFor(image)
   
