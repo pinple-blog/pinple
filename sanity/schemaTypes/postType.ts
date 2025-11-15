@@ -64,20 +64,20 @@ export default defineType({
       title: 'Published at',
       type: 'datetime',
     }),
-    defineField({
+    {
       name: 'excerpt',
       title: 'Excerpt (日本語)',
       type: 'text',
       rows: 4,
       description: '記事の要約（日本語）',
-    }),
-    defineField({
+    } as any,
+    {
       name: 'excerpt_en',
       title: 'Excerpt (English)',
       type: 'text',
       rows: 4,
       description: '記事の要約（英語）',
-    }),
+    } as any,
     {
       name: 'body',
       title: 'Body (日本語)',
